@@ -62,8 +62,9 @@ class _TransactionListState extends State<TransactionList> {
                       ),
                       Container(
                           height: constraints.maxHeight * 0.6,
-                          child: Image.asset(
-                            'assets/images/waiting.png',
+                          child: Image.network(
+                            'https://user-images.githubusercontent.com/930478/56670628-30612d00-6681-11e9-9493-aa19ff0b0819.png',
+                            height: 250,
                             fit: BoxFit.cover,
                           ))
                     ],

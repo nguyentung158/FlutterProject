@@ -43,36 +43,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-        title: 'New shoes',
-        amount: 50,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
-    Transaction(
-        title: 'New jacket',
-        amount: 100,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
-    Transaction(
-        title: 'New shoes',
-        amount: 50,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
-    Transaction(
-        title: 'New jacket',
-        amount: 100,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
-    Transaction(
-        title: 'New shoes',
-        amount: 50,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
-    Transaction(
-        title: 'New jacket',
-        amount: 100,
-        date: DateTime.now(),
-        id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New shoes',
+    //     amount: 50,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New jacket',
+    //     amount: 100,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New shoes',
+    //     amount: 50,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New jacket',
+    //     amount: 100,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New shoes',
+    //     amount: 50,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
+    // Transaction(
+    //     title: 'New jacket',
+    //     amount: 100,
+    //     date: DateTime.now(),
+    //     id: DateTime.now().toString()),
   ];
 
   List<Transaction> get _recentTransactions {
