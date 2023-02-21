@@ -19,7 +19,7 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       child: Column(
         children: [
           ListTile(
@@ -34,8 +34,8 @@ class _OrderItemState extends State<OrderItem> {
             ),
             trailing: IconButton(
               icon: _isExpanded
-                  ? Icon(Icons.expand_less)
-                  : Icon(Icons.expand_more),
+                  ? const Icon(Icons.expand_less)
+                  : const Icon(Icons.expand_more),
               onPressed: () {
                 setState(() {
                   _isExpanded = !_isExpanded;
@@ -44,22 +44,23 @@ class _OrderItemState extends State<OrderItem> {
             ),
           ),
           AnimatedContainer(
-            duration: Duration(microseconds: 300),
+            duration: const Duration(microseconds: 300),
             height: _isExpanded
                 ? min(widget.ordersItem.products.length * 20.0 + 70, 180)
                 : 0,
             child: ListView(
               children: widget.ordersItem.products.map((product) {
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  padding: EdgeInsets.all(10),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  padding: const EdgeInsets.all(10),
                   // color: Theme.of(context).colorScheme.secondary,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
                         product.title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -68,7 +69,7 @@ class _OrderItemState extends State<OrderItem> {
                       ),
                       Text(
                         '${product.quantity} x \$${product.price}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black38,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,

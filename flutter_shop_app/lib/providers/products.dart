@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:great_places_app/providers/product.dart';
 
@@ -55,7 +57,28 @@ class Products with ChangeNotifier {
   List<Product> get favouriteItems =>
       _items.where((element) => element.isFavourite).toList();
 
-  void addItem() {
+  void addItem(Product editedProduct) {
+    final newProduct = Product(
+        title: editedProduct.title,
+        price: editedProduct.price,
+        description: editedProduct.description,
+        imageUrl: editedProduct.imageUrl,
+        isFavourite: editedProduct.isFavourite,
+        id: DateTime.now().toString());
+    _items.add(newProduct);
+    notifyListeners();
+  }
+
+  void updateItem(Product editedProduct, String productId) {
+    final index = _items.indexWhere((element) => element.id == productId);
+    if (index >= 0) {
+      _items[index] = editedProduct;
+      notifyListeners();
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 

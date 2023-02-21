@@ -3,9 +3,11 @@ import 'package:great_places_app/providers/cart.dart';
 import 'package:great_places_app/providers/orders.dart';
 import 'package:great_places_app/providers/products.dart';
 import 'package:great_places_app/screens/cart_screen.dart';
+import 'package:great_places_app/screens/edit_products_screen.dart';
 import 'package:great_places_app/screens/order_screen.dart';
 import 'package:great_places_app/screens/product_detail_screen.dart';
 import 'package:great_places_app/screens/products_overview_screen.dart';
+import 'package:great_places_app/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -52,14 +54,16 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-                .copyWith(secondary: Color.fromARGB(255, 32, 75, 202))),
+                .copyWith(secondary: const Color.fromARGB(255, 32, 75, 202))),
         // home: const ProductsOverviewScreen(),
         initialRoute: '/',
         routes: {
           '/': (context) => const ProductsOverviewScreen(),
           ProductDetailScreen.route: (context) => const ProductDetailScreen(),
           CartScreen.route: (context) => const CartScreen(),
-          OrderScreen.route: (context) => const OrderScreen()
+          OrderScreen.route: (context) => const OrderScreen(),
+          UserProductScreen.route: (context) => const UserProductScreen(),
+          EditProductsScreen.route: (context) => const EditProductsScreen()
         },
       ),
     );
