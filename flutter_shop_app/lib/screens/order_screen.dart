@@ -11,7 +11,7 @@ class OrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<Orders>(context);
+    // final orderData = Provider.of<Orders>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -20,14 +20,34 @@ class OrderScreen extends StatelessWidget {
         ),
       ),
       drawer: const AppDrawer(),
-      body: Consumer(
-        builder: (context, value, child) {
-          return ListView.builder(
-            itemBuilder: (context, index) =>
-                OrderItem(ordersItem: orderData.orders[index]),
-            itemCount: orderData.orders.length,
-          );
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Provider.of<Orders>(context, listen: false).fetchAndSave();
         },
+        child: FutureBuilder(
+          future: Provider.of<Orders>(context, listen: false).fetchAndSave(),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              if (snapshot.error == null) {
+                return Consumer<Orders>(
+                  builder: (ctx, value, child) {
+                    return ListView.builder(
+                      itemBuilder: (context, index) =>
+                          OrderItem(ordersItem: value.orders[index]),
+                      itemCount: value.orders.length,
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text('An error occured'),
+                );
+              }
+            }
+          },
+        ),
       ),
     );
   }

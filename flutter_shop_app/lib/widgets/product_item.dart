@@ -5,10 +5,6 @@ import 'package:great_places_app/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
-  // final String id;
-  // final String title;
-  // final String imageUrl;
-
   const ProductItem({super.key});
 
   @override
@@ -36,8 +32,12 @@ class ProductItem extends StatelessWidget {
                     Icons.favorite,
                     color: product.isFavourite ? Colors.red : Colors.white,
                   ),
-                  onPressed: () {
-                    product.changeFavourite();
+                  onPressed: () async {
+                    try {
+                      await product.changeFavourite();
+                    } catch (e) {
+                      print('errror');
+                    }
                   },
                 );
               },

@@ -6,7 +6,11 @@ class CartItem {
   final int quantity;
   final double price;
 
-  CartItem(this.id, this.title, this.quantity, this.price);
+  CartItem(
+      {required this.id,
+      required this.title,
+      required this.quantity,
+      required this.price});
 }
 
 class Cart with ChangeNotifier {
@@ -22,14 +26,21 @@ class Cart with ChangeNotifier {
         productId,
         (value) {
           return CartItem(
-              value.id, value.title, value.quantity + 1, value.price);
+              id: value.id,
+              price: value.price,
+              title: value.title,
+              quantity: value.quantity + 1);
         },
       );
       notifyListeners();
     } else {
       _items.putIfAbsent(
         productId,
-        () => CartItem(DateTime.now().toString(), title, 1, price),
+        () => CartItem(
+            id: DateTime.now().toString(),
+            title: title,
+            quantity: 1,
+            price: price),
       );
       notifyListeners();
     }
@@ -62,8 +73,11 @@ class Cart with ChangeNotifier {
     } else {
       _items.update(
           productId,
-          (value) =>
-              CartItem(value.id, value.title, value.quantity - 1, value.price));
+          (value) => CartItem(
+              id: value.id,
+              title: value.title,
+              quantity: value.quantity - 1,
+              price: value.price));
     }
     notifyListeners();
   }

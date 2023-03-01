@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:great_places_app/providers/cart.dart';
+import 'package:great_places_app/providers/products.dart';
 import 'package:great_places_app/screens/cart_screen.dart';
 import 'package:great_places_app/widgets/app_drawer.dart';
 import 'package:great_places_app/widgets/badge.dart';
@@ -19,6 +20,25 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _showOnlyFavourites = false;
+  bool _isInit = true;
+  bool _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +85,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
-      body: ProductGrid(
-        showOnlyFavourite: _showOnlyFavourites,
-      ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGrid(
+              showOnlyFavourite: _showOnlyFavourites,
+            ),
     );
   }
 }
