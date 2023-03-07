@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:great_places_app/providers/auth.dart';
 import 'package:great_places_app/providers/cart.dart';
 import 'package:great_places_app/providers/product.dart';
 import 'package:great_places_app/screens/product_detail_screen.dart';
@@ -11,6 +12,8 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
+
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -34,9 +37,10 @@ class ProductItem extends StatelessWidget {
                   ),
                   onPressed: () async {
                     try {
-                      await product.changeFavourite();
+                      await product.changeFavourite(
+                          authData.token!, authData.getUserId!);
                     } catch (e) {
-                      print('errror');
+                      rethrow;
                     }
                   },
                 );

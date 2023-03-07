@@ -21,40 +21,56 @@ class OrdersItem {
 }
 
 class Orders with ChangeNotifier {
+  final String? token;
+  final String? uid;
+
   List<OrdersItem> _orders = [];
+
+  Orders(this._orders, this.token, this.uid);
 
   List<OrdersItem> get orders => [..._orders];
 
   Future<void> fetchAndSave() async {
-    const url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json';
-    final respone = await http.get(Uri.parse(url));
-    if (respone.statusCode >= 400) {
-      throw HttpException('Could not load orders');
+    try {
+      var url =
+          'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$uid.json?auth=$token';
+      final respone = await http.get(Uri.parse(url));
+      print(respone.body);
+      if (respone.statusCode >= 400) {
+        throw HttpException('Could not load orders');
+      }
+      if (respone.body == 'null') {
+        throw HttpException('You has not ordered any products');
+      }
+
+      List<OrdersItem> loadedItems = [];
+
+      final extractedData = json.decode(respone.body) as Map<String, dynamic>;
+      print('hrhrh');
+      extractedData.forEach((key, value) {
+        loadedItems.add(OrdersItem(
+            id: key,
+            amount: value['amount'],
+            products: (value['products'] as List<dynamic>)
+                .map((item) => CartItem(
+                      id: item['id'],
+                      price: item['price'],
+                      quantity: item['quantity'],
+                      title: item['title'],
+                    ))
+                .toList(),
+            dateTime: DateTime.parse(value['dateTime'])));
+      });
+      _orders = loadedItems;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
     }
-    List<OrdersItem> loadedItems = [];
-    final extractedData = json.decode(respone.body) as Map<String, dynamic>;
-    extractedData.forEach((key, value) {
-      loadedItems.add(OrdersItem(
-          id: key,
-          amount: value['amount'],
-          products: (value['products'] as List<dynamic>)
-              .map((item) => CartItem(
-                    id: item['id'],
-                    price: item['price'],
-                    quantity: item['quantity'],
-                    title: item['title'],
-                  ))
-              .toList(),
-          dateTime: DateTime.parse(value['dateTime'])));
-    });
-    _orders = loadedItems;
-    notifyListeners();
   }
 
   Future<void> addOrder(List<CartItem> products, double total) async {
-    const url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json';
+    var url =
+        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$uid.json?auth=$token';
     final timestamp = DateTime.now();
     final code = await http.post(Uri.parse(url),
         body: json.encode({

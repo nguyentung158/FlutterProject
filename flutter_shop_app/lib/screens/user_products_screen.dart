@@ -12,7 +12,6 @@ class UserProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Products', style: TextStyle(fontSize: 20)),
@@ -26,20 +25,31 @@ class UserProductScreen extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await productsData.fetchAndSetProducts();
-        },
-        child: ListView.builder(
-            itemBuilder: (context, index) {
-              return UserProdcutItem(
-                id: productsData.items[index].id,
-                imageUrl: productsData.items[index].imageUrl,
-                title: productsData.items[index].title,
-              );
-            },
-            itemCount: productsData.items.length),
-      ),
+      body: FutureBuilder(
+          future: Provider.of<Products>(context, listen: false)
+              .fetchAndSetProducts(true),
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.waiting
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      await Provider.of<Products>(context, listen: false)
+                          .fetchAndSetProducts(true);
+                    },
+                    child: Consumer<Products>(
+                        builder: (context, productsData, child) {
+                      return ListView.builder(
+                          itemBuilder: (context, index) {
+                            return UserProdcutItem(
+                              id: productsData.items[index].id,
+                              imageUrl: productsData.items[index].imageUrl,
+                              title: productsData.items[index].title,
+                            );
+                          },
+                          itemCount: productsData.items.length);
+                    }),
+                  );
+          }),
     );
   }
 }

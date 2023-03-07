@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 enum FilterOptions { Favourites, All }
 
 class ProductsOverviewScreen extends StatefulWidget {
+  static const route = '/productsOverview';
+
   const ProductsOverviewScreen({super.key});
 
   @override
@@ -25,7 +27,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     if (_isInit) {
       setState(() {
         _isLoading = true;
@@ -45,7 +46,10 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: AppBar(
-        title: const Text('My shop'),
+        title: const Text(
+          'My shop',
+          style: TextStyle(fontSize: 20),
+        ),
         actions: [
           PopupMenuButton(
             onSelected: (FilterOptions selectedValues) {
@@ -86,7 +90,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : ProductGrid(

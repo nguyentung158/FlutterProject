@@ -44,10 +44,38 @@ class CartScreen extends StatelessWidget {
                   // OrderButton(cart: cart),
                   TextButton(
                       onPressed: () async {
-                        await Provider.of<Orders>(context, listen: false)
-                            .addOrder(
-                                cart.items.values.toList(), cart.totalAmount);
-                        cart.removeAll();
+                        if (cart.items.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text(
+                                'Empty Cart',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
+                              content: const Text(
+                                'Please add more items',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Okay'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          await Provider.of<Orders>(context, listen: false)
+                              .addOrder(
+                                  cart.items.values.toList(), cart.totalAmount);
+                          cart.removeAll();
+                        }
                       },
                       child: const Text('ORDER NOW'))
                 ],

@@ -20,14 +20,14 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       required this.isFavourite});
 
-  Future<void> changeFavourite() async {
+  Future<void> changeFavourite(String token, String uid) async {
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
 
     final url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json';
-    final code = await http.patch(Uri.parse(url),
+        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/userFavourites/$uid/$id.json?auth=$token';
+    final code = await http.put(Uri.parse(url),
         body: json.encode({'isFavourite': isFavourite}));
     if (code.statusCode >= 400) {
       isFavourite = oldStatus;

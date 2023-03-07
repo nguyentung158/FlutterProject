@@ -5,65 +5,30 @@ import 'package:great_places_app/providers/product.dart';
 import '../models/https_exception.dart';
 
 class Products with ChangeNotifier {
-  List<Product> _items = [
-    // Product(
-    //     id: 'p1',
-    //     title: 'title',
-    //     description:
-    //         'Now, think about what those things do for your customer. Does careful construction mean that your product is safe for children? Do ethically sourced materials make the buyer feel good about purchasing your product? Do those bells and whistles make everyone who sees your customer with your product weep with envy? Those are benefits.',
-    //     price: 22.42,
-    //     imageUrl:
-    //         'https://img.uhdpaper.com/wallpaper/pantheon-runeterra-targon-639@1@e-preview.jpg?dl',
-    //     isFavourite: false),
-    // Product(
-    //     id: 'p2',
-    //     title: 'titlerrtrt',
-    //     description:
-    //         'Now, think about what those things do for your customer. Does careful construction mean that your product is safe for children? Do ethically sourced materials make the buyer feel good about purchasing your product? Do those bells and whistles make everyone who sees your customer with your product weep with envy? Those are benefits.',
-    //     price: 22.42,
-    //     imageUrl:
-    //         'https://img.uhdpaper.com/wallpaper/pantheon-runeterra-targon-639@1@e-preview.jpg?dl',
-    //     isFavourite: false),
-    // Product(
-    //     id: 'p3',
-    //     title: 'titlfdfdfde',
-    //     description:
-    //         'Now, think about what those things do for your customer. Does careful construction mean that your product is safe for children? Do ethically sourced materials make the buyer feel good about purchasing your product? Do those bells and whistles make everyone who sees your customer with your product weep with envy? Those are benefits.',
-    //     price: 22.42,
-    //     imageUrl:
-    //         'https://img.uhdpaper.com/wallpaper/pantheon-runeterra-targon-639@1@e-preview.jpg?dl',
-    //     isFavourite: false),
-    // Product(
-    //     id: 'p4',
-    //     title: 'titlfdfdfdfe',
-    //     description:
-    //         'Now, think about what those things do for your customer. Does careful construction mean that your product is safe for children? Do ethically sourced materials make the buyer feel good about purchasing your product? Do those bells and whistles make everyone who sees your customer with your product weep with envy? Those are benefits.',
-    //     price: 22.42,
-    //     imageUrl:
-    //         'https://img.uhdpaper.com/wallpaper/pantheon-runeterra-targon-639@1@e-preview.jpg?dl',
-    //     isFavourite: false),
-    // Product(
-    //     id: 'p5',
-    //     title: 'titlfdfdfddsdssfe',
-    //     description:
-    //         'Now, think about what those things do for your customer. Does careful construction mean that your product is safe for children? Do ethically sourced materials make the buyer feel good about purchasing your product? Do those bells and whistles make everyone who sees your customer with your product weep with envy? Those are benefits.',
-    //     price: 22.42,
-    //     imageUrl:
-    //         'https://img.uhdpaper.com/wallpaper/pantheon-runeterra-targon-639@1@e-preview.jpg?dl',
-    //     isFavourite: false),
-  ];
+  final String? token;
+  final String? uid;
+
+  List<Product> _items = [];
+
+  Products(this.token, this._items, this.uid);
 
   List<Product> get items => [..._items];
 
   List<Product> get favouriteItems =>
       _items.where((element) => element.isFavourite).toList();
 
-  Future<void> fetchAndSetProducts() async {
-    const url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products.json';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$uid"' : '';
+    var url =
+        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$token&$filterString';
     try {
       final response = await http.get(Uri.parse(url));
       final responseData = json.decode(response.body) as Map<String, dynamic>;
+      url =
+          'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/userFavourites/$uid.json?auth=$token';
+      var favouriteResponse = await http.get(Uri.parse(url));
+      var favouriteData = json.decode(favouriteResponse.body);
       final List<Product> loadedProducts = [];
       responseData.forEach(
         (key, value) {
@@ -73,20 +38,23 @@ class Products with ChangeNotifier {
               description: value['description'],
               price: value['price'],
               imageUrl: value['imageUrl'],
-              isFavourite: value['isFavourite']));
+              isFavourite: favouriteData == null
+                  ? false
+                  : favouriteData[key] == null
+                      ? false
+                      : favouriteData[key]['isFavourite']));
         },
       );
       _items = loadedProducts;
       notifyListeners();
-      print((responseData));
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> addItem(Product editedProduct) async {
-    const url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products.json';
+    var url =
+        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$token';
     try {
       await http.post(
         Uri.parse(url),
@@ -95,7 +63,7 @@ class Products with ChangeNotifier {
           'description': editedProduct.description,
           'imageUrl': editedProduct.imageUrl,
           'price': editedProduct.price,
-          'isFavourite': false
+          'creatorId': uid
         }),
       );
       final newProduct = Product(
@@ -116,7 +84,7 @@ class Products with ChangeNotifier {
     final index = _items.indexWhere((element) => element.id == productId);
     if (index >= 0) {
       final url =
-          'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products/$productId.json';
+          'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products/$productId.json?auth=$token';
       try {
         await http.patch(Uri.parse(url),
             body: json.encode({
@@ -124,6 +92,7 @@ class Products with ChangeNotifier {
               'description': editedProduct.description,
               'imageUrl': editedProduct.imageUrl,
               'price': editedProduct.price,
+              'creatorId': uid
             }));
         _items[index] = editedProduct;
         notifyListeners();
@@ -136,7 +105,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     // ignore: prefer_const_declarations
     final url =
-        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json';
+        'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$token';
 
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];

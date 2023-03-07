@@ -11,7 +11,6 @@ class OrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final orderData = Provider.of<Orders>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -41,8 +40,8 @@ class OrderScreen extends StatelessWidget {
                   },
                 );
               } else {
-                return const Center(
-                  child: Text('An error occured'),
+                return Center(
+                  child: Text(snapshot.error.toString()),
                 );
               }
             }
