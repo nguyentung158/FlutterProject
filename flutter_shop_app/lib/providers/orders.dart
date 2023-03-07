@@ -35,7 +35,6 @@ class Orders with ChangeNotifier {
       var url =
           'https://shop-a25ed-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$uid.json?auth=$token';
       final respone = await http.get(Uri.parse(url));
-      print(respone.body);
       if (respone.statusCode >= 400) {
         throw HttpException('Could not load orders');
       }
@@ -46,7 +45,6 @@ class Orders with ChangeNotifier {
       List<OrdersItem> loadedItems = [];
 
       final extractedData = json.decode(respone.body) as Map<String, dynamic>;
-      print('hrhrh');
       extractedData.forEach((key, value) {
         loadedItems.add(OrdersItem(
             id: key,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:great_places_app/helpers/custom_route.dart';
 import 'package:great_places_app/providers/auth.dart';
 import 'package:great_places_app/providers/cart.dart';
 import 'package:great_places_app/providers/orders.dart';
@@ -69,7 +70,10 @@ class MyApp extends StatelessWidget {
                     ),
                   ),
               colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-                  .copyWith(secondary: const Color.fromARGB(255, 32, 75, 202))),
+                  .copyWith(secondary: const Color.fromARGB(255, 32, 75, 202)),
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder()
+              })),
           home: auth.isAuth
               ? const ProductsOverviewScreen()
               : FutureBuilder(
@@ -77,8 +81,8 @@ class MyApp extends StatelessWidget {
                   builder: (ctx, authResultSnapshot) =>
                       authResultSnapshot.connectionState ==
                               ConnectionState.waiting
-                          ? SplashScreen()
-                          : AuthScreen(),
+                          ? const SplashScreen()
+                          : const AuthScreen(),
                 ),
           // initialRoute: '/',
           routes: {

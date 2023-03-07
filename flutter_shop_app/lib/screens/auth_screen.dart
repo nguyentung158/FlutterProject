@@ -55,7 +55,8 @@ class AuthCard extends StatefulWidget {
   State<AuthCard> createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.login;
   final Map<String, String> _authData = {
@@ -64,15 +65,19 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  late AnimationController controller;
+  late Animation<double> opacityAnimation;
 
   void _switchAuthMode() {
     if (_authMode == AuthMode.login) {
       setState(() {
         _authMode = AuthMode.signup;
+        controller.forward();
       });
     } else {
       setState(() {
         _authMode = AuthMode.login;
+        controller.reverse();
       });
     }
   }
@@ -145,9 +150,33 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 600,
+      ),
+    );
+    opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
+    // heightAnimation.addListener(() {
+    //   setState(() {});
+    // });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: _authMode == AuthMode.login ? 400 : 425,
+    return AnimatedContainer(
+      height: _authMode == AuthMode.login ? 375 : 425,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
@@ -156,6 +185,8 @@ class _AuthCardState extends State<AuthCard> {
         color: Colors.white,
       ),
       padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.elasticInOut,
       child: SingleChildScrollView(
         child: Form(
             key: _formKey,
@@ -225,34 +256,41 @@ class _AuthCardState extends State<AuthCard> {
                 const SizedBox(
                   height: 20,
                 ),
-                _authMode == AuthMode.login
-                    ? Container()
-                    : TextFormField(
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.lock),
-                          hintText: 'Password',
-                          filled: true,
-                          fillColor: Color(0xffdadada),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30),
-                            ),
-                            borderSide: BorderSide.none,
+                AnimatedContainer(
+                  constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.login ? 0 : 60,
+                      maxHeight: _authMode == AuthMode.login ? 0 : 120),
+                  duration: const Duration(milliseconds: 400),
+                  child: FadeTransition(
+                    opacity: opacityAnimation,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.lock),
+                        hintText: 'Password',
+                        filled: true,
+                        fillColor: Color(0xffdadada),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
                           ),
+                          borderSide: BorderSide.none,
                         ),
-                        obscureText: true,
-                        validator: _authMode == AuthMode.signup
-                            ? (value) {
-                                if (value == null || value == '') {
-                                  return 'Passwords do not match!';
-                                }
-                                if (value != _passwordController.text) {
-                                  return 'Passwords do not match!';
-                                }
-                                return null;
-                              }
-                            : null,
                       ),
+                      obscureText: true,
+                      validator: _authMode == AuthMode.signup
+                          ? (value) {
+                              if (value == null || value == '') {
+                                return 'Passwords do not match!';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match!';
+                              }
+                              return null;
+                            }
+                          : null,
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),

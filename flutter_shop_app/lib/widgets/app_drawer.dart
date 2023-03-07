@@ -61,7 +61,7 @@ class AppDrawer extends StatelessWidget {
             height: 0,
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
+            leading: const Icon(Icons.exit_to_app),
             title: Text(
               'Logout',
               style: Theme.of(context).textTheme.headline4,

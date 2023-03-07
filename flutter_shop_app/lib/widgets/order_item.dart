@@ -44,7 +44,7 @@ class _OrderItemState extends State<OrderItem> {
             ),
           ),
           AnimatedContainer(
-            duration: const Duration(microseconds: 300),
+            duration: const Duration(milliseconds: 300),
             height: _isExpanded
                 ? min(widget.ordersItem.products.length * 20.0 + 70, 180)
                 : 0,
